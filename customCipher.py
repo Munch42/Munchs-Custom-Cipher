@@ -1,9 +1,12 @@
 import random;
 import string;
+import math;
 
 createNewKeyInput = input("Would you like to create a new unique encryption key? (Y/n): ");
 userKey = "";
 numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
+# Note: for below with the \\ when it is printed, it comes out as two \ but it is actually stored as just one so it should not matter
+inverseCharacters = ['~', '}', '|', '{', '`', '_', '^', ']', "\\", '[', '@', '?', '>', '=', '<', ';', ':', '/', '.', '-', ' ', ',', '+', '*', ')', '(', "'", '&', '%', '$', "#", '"', '!']
 
 # These are the same so we can just use ascii_letters for both combined
 # print(string.ascii_letters + "\n")
@@ -17,34 +20,84 @@ def createUserKey(length):
     key = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits + string.punctuation) for _ in range(length))
     return key
 
+def getAlphabetLocation(character):
+    char_pos = string.ascii_lowercase.find(character.lower())
+    # We add 1 to get its original value in the alphabet
+    char_pos += 1
+
+    return char_pos
+
+def getSymbolLocationInverse(symbol):
+    symbol_pos = inverseCharacters.index(symbol)
+    # We add 1 because it gives us its array position
+    symbol_pos += 1
+
+    return symbol_pos
+
 def convertKeyToOffsets(key):
+    # [5, 3, 16, 6, 2, 9, 4, 5, 30, 39, 13, 1, 26, 3, 29, 5] Same Key
+    # [5, 3, 16, 6, 2, 9, 4, 5, 30, 39, 13, 1, 26, 3, 29, 5] Same Key
+    # [-37, 28, 15, -37, 9, -36, 1, 8, 20, -2, -3, -35, 4, -28, 11, 28] Different Key
+
     offsets = []
     # Follow rules laid out in CipherIdea.txt to convert all of the characters in the key to valid offsets for the text.
+    symbolCount = 0
+    lowercaseCount = 0
+    uppercaseCount = 0
+    numberSum = 0
+
+    for character in key:
+        if character in string.ascii_lowercase:
+            lowercaseCount += 1
+        elif character in string.ascii_uppercase:
+            uppercaseCount += 1
+        elif character in string.punctuation:
+            symbolCount += 1
+        elif character in numbers:
+            num = int(character)
+            numberSum += num
+
+    # print(symbolCount)
+    # print(lowercaseCount)
+    # print(uppercaseCount)
+    # print(numberSum)
+
     for character in key:
         if character in string.ascii_lowercase:
             # Lowercase Character
-            print("Lowercase")
-            char_pos = string.ascii_lowercase.find(character)
-            # We add 1 to get its original value in the alphabet
-            char_pos += 1
-            operation = random.choice("+-")
+            # print("Lowercase")
+            char_pos = getAlphabetLocation(character)
 
-            if operation == "+":
-                char_pos += random.randrange(1, 6)
-            else:
-                char_pos -= random.randrange(1, 6)
+            # We then add 0.5 times the symbol count rounded off to the character position to get the offset for this portion
+            offset = char_pos + round((0.5 * symbolCount))
 
-            print(char_pos)
+            offsets.append(offset)
         elif character in string.ascii_uppercase:
             # Uppercase Character
-            print("Upper")
+            # print("Upper")
+            char_pos = getAlphabetLocation(character)
+
+            # We then add (pi * (the sum of all numbers in the key - half of the keys length) rounded to the char_pos
+            offset = round(char_pos + (math.pi * (numberSum - len(key))))
+
+            offsets.append(offset)
         elif character in numbers:
             # Number
-            print("Number")
+            # print("Number")
+            number = int(character)
+
+            offset = number - round(0.5 * lowercaseCount)
+
+            offsets.append(offset)
         elif character in string.punctuation:
             # Punctuation
-            print("Symbol")
+            # print("Symbol")
+            symbol_pos = getSymbolLocationInverse(character)
 
+            # We then divide the the symbol's location by pi and round it
+            offset = round(symbol_pos / math.pi)
+
+            offsets.append(offset)
 
     return offsets
 
