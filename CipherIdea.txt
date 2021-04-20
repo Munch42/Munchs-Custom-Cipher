@@ -20,3 +20,19 @@ Then, each offset has a chance to become the inverse of itself by being multipli
 Here, the 14 and the -2 became their inverses of -14 and 2
 (This step is here so that each character of the key can be a negative and not just the numbers)
 
+Then, we take those offsets and apply them to the input text so if the input was: Hellos!!
+It would come out with this one as:
+QQNWPE}\
+
+This is because
+H + 27 characters = Q
+e - 14 characters = Q
+l + 2 characters = N
+l + 9 characters = W
+o + 27 characters = P
+s - 14 characters = E
+! + 2 symbol characters = }
+! + 9 symbol characters = \
+
+Optional: Could make it so that it swaps between symbol and letter characters every x characters dependant on the last or first character of the key so that
+you could not tell whether or not an input character was a symbol or a letter like
