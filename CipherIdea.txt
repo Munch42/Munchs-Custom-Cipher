@@ -1,0 +1,22 @@
+Take in a key that is then converted to a number of offsets similar to a caesar cipher
+Example:
+Input key: yL3(
+Lowercase Letters = Their place in the alphabet + a random number between 1 and 5
+Uppercase Letters = Their place in the alphabet + a random number between 1 and 5 - half of the random number then rounded to the nearest number
+Numbers = The number itself + or - a random number between 2 and 8
+Punctuation = Location (as a number) in an inverse array of the symbols divided by pi and then rounded to the nearest number
+Inverse array of punctuation = ~}|{`_^]\[@?>=<;:/.- ,+*)('&%$#"!
+                               123456789111111111222222222233333
+                                        123456789123456789123456
+
+                               Read the above as 1-9 then 11 12 13, the second digit is just beneath it
+
+Therefore, the input key would have its offsets as for example:
+27, 14, -2, 9
+(25 + 2) (12 + 4 - 2) (3 - 5) (28 / pi ~= 8.9 = 9)
+
+Then, each offset has a chance to become the inverse of itself by being multiplied by -1 so in this case it would look like:
+27, -14, 2, 9
+Here, the 14 and the -2 became their inverses of -14 and 2
+(This step is here so that each character of the key can be a negative and not just the numbers)
+
