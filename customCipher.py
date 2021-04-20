@@ -40,6 +40,7 @@ def convertKeyToOffsets(key):
     # [-37, 28, 15, -37, 9, -36, 1, 8, 20, -2, -3, -35, 4, -28, 11, 28] Different Key
 
     offsets = []
+    finalOffsets = []
     # Follow rules laid out in CipherIdea.txt to convert all of the characters in the key to valid offsets for the text.
     symbolCount = 0
     lowercaseCount = 0
@@ -99,7 +100,14 @@ def convertKeyToOffsets(key):
 
             offsets.append(offset)
 
-    return offsets
+    # Now we possibly inverse the output
+    # If the total number of uppercase letters is even then it stays the same while if it is odd, it inverses the offsets
+    if (uppercaseCount % 2) != 0:
+        # It is odd. If it was == to 0 then it would be even
+        for offset in offsets:
+            finalOffsets.append((offset * -1))
+
+    return finalOffsets
 
 if createNewKeyInput.lower() == "y":
     userKey = createUserKey(16);
@@ -111,6 +119,7 @@ if userKey == "":
 operationType = input("Would you like to encrypt (1) or decrypt (2) some text?\n")
 
 keyOffsets = convertKeyToOffsets(userKey)
+print(keyOffsets)
 
 print("------- Initiating Process -------")
 if operationType == "1":
