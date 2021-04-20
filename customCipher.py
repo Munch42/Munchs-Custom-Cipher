@@ -3,6 +3,7 @@ import string;
 
 createNewKeyInput = input("Would you like to create a new unique encryption key? (Y/n): ");
 userKey = "";
+numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 
 # These are the same so we can just use ascii_letters for both combined
 # print(string.ascii_letters + "\n")
@@ -19,6 +20,32 @@ def createUserKey(length):
 def convertKeyToOffsets(key):
     offsets = []
     # Follow rules laid out in CipherIdea.txt to convert all of the characters in the key to valid offsets for the text.
+    for character in key:
+        if character in string.ascii_lowercase:
+            # Lowercase Character
+            print("Lowercase")
+            char_pos = string.ascii_lowercase.find(character)
+            # We add 1 to get its original value in the alphabet
+            char_pos += 1
+            operation = random.choice("+-")
+
+            if operation == "+":
+                char_pos += random.randrange(1, 6)
+            else:
+                char_pos -= random.randrange(1, 6)
+
+            print(char_pos)
+        elif character in string.ascii_uppercase:
+            # Uppercase Character
+            print("Upper")
+        elif character in numbers:
+            # Number
+            print("Number")
+        elif character in string.punctuation:
+            # Punctuation
+            print("Symbol")
+
+
     return offsets
 
 if createNewKeyInput.lower() == "y":
@@ -29,6 +56,8 @@ if userKey == "":
     userKey = input("Please input your user key to begin the encryption or decryption process:\n");
 
 operationType = input("Would you like to encrypt (1) or decrypt (2) some text?\n")
+
+keyOffsets = convertKeyToOffsets(userKey)
 
 print("------- Initiating Process -------")
 if operationType == "1":

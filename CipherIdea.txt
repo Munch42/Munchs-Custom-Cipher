@@ -1,7 +1,7 @@
 Take in a key that is then converted to a number of offsets similar to a caesar cipher
 Example:
 Input key: yL3(
-Lowercase Letters = Their place in the alphabet + a random number between 1 and 5
+Lowercase Letters = Their place in the alphabet + or - a random number between 1 and 5
 Uppercase Letters = Their place in the alphabet + a random number between 1 and 5 - half of the random number then rounded to the nearest number
 Numbers = The number itself + or - a random number between 2 and 8
 Punctuation = Location (as a number) in an inverse array of the symbols divided by pi and then rounded to the nearest number
@@ -36,3 +36,8 @@ s - 14 characters = E
 
 Optional: Could make it so that it swaps between symbol and letter characters every x characters dependant on the last or first character of the key so that
 you could not tell whether or not an input character was a symbol or a letter like
+
+Additionally, take in the key and add some variations to it dependant on some section (likely the last section) of the key so for example if the last part of the key
+has an offset divisible by 3, then we inverse the order of the offsets and then apply those to the original key making another key which we repeat this process
+for to make 10 keys in addition to the first key meaning that we have 10 completely unique and different keys meaning that not a single offset in the encrypted
+text is the exact replica of the original key's offsets.
