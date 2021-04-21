@@ -36,6 +36,17 @@ def getSymbolLocationInverse(symbol):
 
 def getAlphabetCharacterFromLocation(location):
     # Basically do the location / 26 - the whole number portion which has been multiplied by 26 to get the remaining position
+    # For example, 65 / 26 = 2.5 - 2 = 0.5 x 26 = 13
+    letterPos = (location / 26) - int((location / 26))
+    letterPos = round(letterPos * 26)
+
+    # Test Key: yICs%f,ov0/1,|dU
+    # print(letterPos)
+    # print(location)
+
+    letter = string.ascii_uppercase[letterPos]
+
+    return letter
 
 def convertKeyToOffsets(key):
     # [5, 3, 16, 6, 2, 9, 4, 5, 30, 39, 13, 1, 26, 3, 29, 5] Same Key
@@ -109,6 +120,8 @@ def convertKeyToOffsets(key):
         # It is odd. If it was == to 0 then it would be even
         for offset in offsets:
             finalOffsets.append((offset * -1))
+    else:
+        finalOffsets = offsets
 
     return finalOffsets
 
@@ -117,7 +130,7 @@ def applyOffsets(offsetList, text):
 
     # We start at -1 because it adds one at the beginning no matter what and we want to start at 0
     curOffsetPos = -1
-    maxOffsetPos = len(offsetList)
+    maxOffsetPos = len(offsetList) - 1
     totalCharactersMoved = 0
     previousSwapCharNum = 0
     # If charType = -1 then it is alphabet
@@ -153,9 +166,20 @@ def applyOffsets(offsetList, text):
                 position = getAlphabetLocation(character)
                 position += offsetList[curOffsetPos]
 
+                letter = getAlphabetCharacterFromLocation(position)
+
+                finalText += letter
+
+                # print(finalText)
+            elif character in string.punctuation:
+                # This is some arbitrary position
+                position = 6
+                
+
 
         elif charType == 1:
             # Symbols
+            print("Symbols")
 
         totalCharactersMoved += 1
 
@@ -170,6 +194,8 @@ operationType = input("Would you like to encrypt (1) or decrypt (2) some text?\n
 
 keyOffsets = convertKeyToOffsets(userKey)
 print(keyOffsets)
+
+applyOffsets(keyOffsets, "Hi")
 
 print("------- Initiating Process -------")
 if operationType == "1":
