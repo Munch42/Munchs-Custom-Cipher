@@ -34,6 +34,9 @@ def getSymbolLocationInverse(symbol):
 
     return symbol_pos
 
+def getAlphabetCharacterFromLocation(location):
+    # Basically do the location / 26 - the whole number portion which has been multiplied by 26 to get the remaining position
+
 def convertKeyToOffsets(key):
     # [5, 3, 16, 6, 2, 9, 4, 5, 30, 39, 13, 1, 26, 3, 29, 5] Same Key
     # [5, 3, 16, 6, 2, 9, 4, 5, 30, 39, 13, 1, 26, 3, 29, 5] Same Key
@@ -108,6 +111,53 @@ def convertKeyToOffsets(key):
             finalOffsets.append((offset * -1))
 
     return finalOffsets
+
+def applyOffsets(offsetList, text):
+    finalText = ""
+
+    # We start at -1 because it adds one at the beginning no matter what and we want to start at 0
+    curOffsetPos = -1
+    maxOffsetPos = len(offsetList)
+    totalCharactersMoved = 0
+    previousSwapCharNum = 0
+    # If charType = -1 then it is alphabet
+    # If charType = 1 then it is symbols
+    charType = -1
+    # We take the value of the last offset and then make sure that it is positive and not equal to 0
+    swapCharactersThreshold = offsetList[-1]
+
+    if swapCharactersThreshold < 0:
+        swapCharactersThreshold *= -1
+    elif swapCharactersThreshold == 0:
+        swapCharactersThreshold = 1
+
+    for character in text:
+        if curOffsetPos >= maxOffsetPos:
+            curOffsetPos = 0
+        else:
+            curOffsetPos += 1
+
+        if swapCharactersThreshold == 1:
+            # If it is every character, we just swap it
+            charType *= -1
+        # Otherwise, we check to see if we have reached the next threshold and then if we do we add to the previous threshold number and swap the type
+        elif (totalCharactersMoved / swapCharactersThreshold).is_integer():
+            if (totalCharactersMoved / swapCharactersThreshold) > previousSwapCharNum:
+                previousSwapCharNum += 1
+                charType *= -1
+
+        if charType == -1:
+            # Alphabet
+            if character in string.ascii_letters:
+                # This is the position in the alphabet and the new position that it will be at in the alphabet
+                position = getAlphabetLocation(character)
+                position += offsetList[curOffsetPos]
+
+
+        elif charType == 1:
+            # Symbols
+
+        totalCharactersMoved += 1
 
 if createNewKeyInput.lower() == "y":
     userKey = createUserKey(16);
