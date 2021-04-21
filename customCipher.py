@@ -10,8 +10,8 @@ inverseCharacters = ['~', '}', '|', '{', '`', '_', '^', ']', "\\", '[', '@', '?'
 
 # Fix error and then go through all / 95 sections and change to the length of the string which should = 95
 allCharactersString = string.ascii_lowercase + string.ascii_uppercase + string.punctuation + " "
-for num in numbers:
-    allCharactersString += num
+for number in numbers:
+    allCharactersString += number
 
 allCharactersStringLength = len(allCharactersString)
 # print(len(allCharactersString)) = 85 without numbers or 95 With
@@ -57,11 +57,22 @@ def getAlphabetCharacterFromLocation(location):
     return letter
 
 def invertOffsets(offsetList):
+    # This is a function to flip the sign of all offsets in a list
     editedOffsets = []
 
     for offset in offsetList:
         modifiedOffset = offset * -1
         editedOffsets.append(modifiedOffset)
+
+    return editedOffsets
+
+def addXToAllOffsets(offsetList, amount):
+    # This is a function to add a specified amount (it may be negative so it may subtract said amount) to/from each offset in a list
+    editedOffsets = []
+
+    for offset in offsetList:
+        changedOffset = offset + amount
+        editedOffsets.append(changedOffset)
 
     return editedOffsets
 
@@ -284,12 +295,82 @@ operationType = input("Would you like to encrypt (1) or decrypt (2) some text?\n
 # decodedText = decodeText(keyList, text)
 # print(decodedText)
 
+keys = []
+firstKey = False
 
+for x in range(10):
+    if x == 0:
+        firstKey = True
+    else:
+        firstKey = False
+
+    previousKey = ""
+
+    if firstKey:
+        previousKey = userKey
+    else:
+        previousKey = keys[x - 1]
+
+    previousOffsets = convertKeyToOffsets(previousKey)
+    newKey = ""
+
+    if (previousOffsets[-2] / 3).is_integer():
+        # Inverse the order of the offsets of the previous key and apply them back to previous key
+        reversedPreviousOffsets = invertOffsets(previousOffsets)
+
+        newKey = applyOffsets(reversedPreviousOffsets, previousKey)
+    elif previousOffsets[-2] % 2 != 0:
+        # It is odd so add 2 to all offsets and apply to previous key
+        addedPreviousOffsets = addXToAllOffsets(previousOffsets, 2)
+
+        newKey = applyOffsets(addedPreviousOffsets, previousKey)
+    else:
+        # Use the offsets made by the key to get a new key
+        newKey = applyOffsets(previousOffsets, previousKey)
+
+    keys.append(newKey)
+
+# print(keys)
 
 print("------- Initiating Process -------")
 if operationType == "1":
     textToEncrypt = input("Please enter the text that you would like to encrypt in accordance with your key:\n")
+
+    totalSections = len(textToEncrypt) / len(userKey)
+    if not totalSections.is_integer():
+        totalSections = int(totalSections) + 1
+
+    keyRepeats = totalSections
+
+    currentKey = 0
+    currentPos = 0
+    encryptedText = ""
+    for i in range(keyRepeats):
+        keyToUse = keys[currentKey]
+        keyOffsetsToUse = convertKeyToOffsets(keyToUse)
+        currentEncryptingPhrase = ""
+
+        for y in range(len(userKey)):
+            if currentPos >= len(textToEncrypt):
+                break
+
+            currentEncryptingPhrase += textToEncrypt[currentPos]
+
+            currentPos += 1
+
+        encryptedText += applyOffsets(keyOffsetsToUse, currentEncryptingPhrase)
+
+        if currentKey >= 9:
+            currentKey = 0
+        else:
+            currentKey += 1
+
+    print("Your encrypted text is: " + encryptedText)
+
 elif operationType == "2":
     textToDecrypt = input("Please enter the encrypted text that you would like to decrypt with your key:\n")
+    decryptedText = decodeText(keys, textToDecrypt)
+
+    print("Your decrypted text is: " + decryptedText)
 else:
     print("Please restart the cipher process, selecting a valid option.")
