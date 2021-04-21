@@ -50,6 +50,15 @@ def getAlphabetCharacterFromLocation(location):
 
     return letter
 
+def invertOffsets(offsetList):
+    editedOffsets = []
+
+    for offset in offsetList:
+        modifiedOffset = offset * -1
+        editedOffsets.append(modifiedOffset)
+
+    return editedOffsets
+
 def convertKeyToOffsets(key):
     # [5, 3, 16, 6, 2, 9, 4, 5, 30, 39, 13, 1, 26, 3, 29, 5] Same Key
     # [5, 3, 16, 6, 2, 9, 4, 5, 30, 39, 13, 1, 26, 3, 29, 5] Same Key
@@ -169,7 +178,7 @@ def applyOffsets(offsetList, text):
         # print(originalPos)
         # print(offsetPos)
         # print(letter)
-        print(finalText)
+        # print(finalText)
 
         totalCharactersMoved += 1
 
@@ -198,8 +207,17 @@ def applyOffsets(offsetList, text):
         #        # This is some arbitrary position
         #        position = 6
         # elif charType == 1:
-            # Symbols
+        #    # Symbols
         #    print("Symbols")
+
+    return finalText
+
+def decodeText(keys, encText):
+    reversedKeyOffsets = []
+
+    for key in keys:
+        offsets = convertKeyToOffsets(key)
+        reversedKeyOffsets.append(invertOffsets(offsets))
 
 if createNewKeyInput.lower() == "y":
     userKey = createUserKey(16);
@@ -213,7 +231,8 @@ operationType = input("Would you like to encrypt (1) or decrypt (2) some text?\n
 keyOffsets = convertKeyToOffsets(userKey)
 print(keyOffsets)
 
-applyOffsets(keyOffsets, "Hi! EEEEEEEEEEEEEEEEEEEEEEEEE")
+text = applyOffsets(keyOffsets, "Hi! EEEEEEEEEEEEEEEEEEEEEEEEE")
+print(text)
 
 print("------- Initiating Process -------")
 if operationType == "1":
@@ -222,4 +241,3 @@ elif operationType == "2":
     textToDecrypt = input("Please enter the encrypted text that you would like to decrypt with your key:\n")
 else:
     print("Please restart the cipher process, selecting a valid option.")
-
