@@ -8,7 +8,13 @@ numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 # Note: for below with the \\ when it is printed, it comes out as two \ but it is actually stored as just one so it should not matter
 inverseCharacters = ['~', '}', '|', '{', '`', '_', '^', ']', "\\", '[', '@', '?', '>', '=', '<', ';', ':', '/', '.', '-', ' ', ',', '+', '*', ')', '(', "'", '&', '%', '$', "#", '"', '!']
 
+# Fix error and then go through all / 95 sections and change to the length of the string which should = 95
 allCharactersString = string.ascii_lowercase + string.ascii_uppercase + string.punctuation + " "
+for num in numbers:
+    allCharactersString += num
+
+allCharactersStringLength = len(allCharactersString)
+# print(len(allCharactersString)) = 85 without numbers or 95 With
 
 # These are the same so we can just use ascii_letters for both combined
 # print(string.ascii_letters + "\n")
@@ -168,8 +174,8 @@ def applyOffsets(offsetList, text):
         # print(originalPos)
         offsetPos = originalPos + offsetList[curOffsetPos]
         # print(offsetPos)
-        offsetPos = (offsetPos / 85) - int((offsetPos / 85))
-        offsetPos = round(offsetPos * 85)
+        offsetPos = (offsetPos / allCharactersStringLength) - int((offsetPos / allCharactersStringLength))
+        offsetPos = round(offsetPos * allCharactersStringLength)
         letter = allCharactersString[offsetPos]
 
         finalText += letter
@@ -213,11 +219,43 @@ def applyOffsets(offsetList, text):
     return finalText
 
 def decodeText(keys, encText):
+    # This is a list of lists with the offsets for each key-
     reversedKeyOffsets = []
+    characterCount = 0
+    offsetCount = 0
+    decodedMessage = ""
 
     for key in keys:
         offsets = convertKeyToOffsets(key)
         reversedKeyOffsets.append(invertOffsets(offsets))
+
+    keyLength = len(reversedKeyOffsets[0])
+    # print(reversedKeyOffsets[0][0])
+
+    for char in encText:
+        currentPositionInChars = allCharactersString.find(char)
+        if int(characterCount / keyLength) > (len(reversedKeyOffsets) - 1):
+            # If we are on the 11th key or more which don't exist we reset to 0 character count
+            characterCount = 0
+
+        # We get the current position and then the key that we are on which is the whole number portion of the char count divided by the key length
+        # From there, we can then get the offset we want which is just the offset we are on starting at 0 and then incremented until 15 where we reset it
+        originalPosition = currentPositionInChars + reversedKeyOffsets[int(characterCount / keyLength)][offsetCount]
+        originalLetterPos = (originalPosition / allCharactersStringLength) - int((originalPosition / allCharactersStringLength))
+        originalLetterPos = round(originalLetterPos * allCharactersStringLength)
+        letter = allCharactersString[originalLetterPos]
+
+        decodedMessage += letter
+
+        # If we are on the last offset, then we go back to the next offset as we also go to the next key
+        if offsetCount == (keyLength - 1):
+            offsetCount = 0
+        else:
+            offsetCount += 1
+
+        characterCount += 1
+
+    return decodedMessage
 
 if createNewKeyInput.lower() == "y":
     userKey = createUserKey(16);
@@ -228,11 +266,25 @@ if userKey == "":
 
 operationType = input("Would you like to encrypt (1) or decrypt (2) some text?\n")
 
-keyOffsets = convertKeyToOffsets(userKey)
-print(keyOffsets)
+# keyOffsets = convertKeyToOffsets(userKey)
+# print(keyOffsets)
 
-text = applyOffsets(keyOffsets, "Hi! EEEEEEEEEEEEEEEEEEEEEEEEE")
-print(text)
+# Key: hF&T9qq&xaPG%%&r
+# Output: KlLBKYZQ)MEwVWX*!B"R!/:']#5|lmnzq2rhqEFwOskcBCDPGhHx7klcu91^h0i?9,}!*\b.~-"T/3> {Y[*@7
+# Second Key Try: KlLBKYZQ)MEwVWX*!B"R!/:']#5|lmnzq2rhqEFwOskcBCDPGhHx7klcu91^h0i?9,}!*\b.~-"T/3> {Y[*@7
+# Key 2: XL_BsW<;g_hd@;>~
+# Output 2: a E]"eLMTLWTQSSPqfU8<u"#*"mjgiif\-k%H`rszrCzwyyv7{A?n(89f8ifc6d!&P\g_D}*;,>;*~/-SC:p6T
+# Second Key Try 2: a E]"eLMTLWTQSSPqfU8<u"#*"mjgiif\-k%H`rszrCzwyyv7{A?n(89f8ifc6d!&P\g_D}*;,>;*~/-SC:p6T
+
+# text = applyOffsets(keyOffsets, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz12345678910!~`@#$%^%&*()&_+-=/.,:?")
+# print(text)
+
+# keyList = [userKey]
+
+# decodedText = decodeText(keyList, text)
+# print(decodedText)
+
+
 
 print("------- Initiating Process -------")
 if operationType == "1":
