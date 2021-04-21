@@ -41,6 +41,10 @@ you could not tell whether or not an input character was a symbol or a letter li
 Swapping Rules:
 Use the last offset and then after you go through the amount of characters of the value of the last offset, swap to symbols or letters
 
+To actually achieve this, we locate the character we are replacing in a list (or string) of all lowercase, uppercase, and punctuation characters
+And then we apply the offset from there. To decode from this, we take the reversed offsets and apply them to the character in this list and get out our
+original character.
+
 Additionally, take in the key and add some variations to it dependant on some section (likely the last section) of the key so for example if the last part of the key
 has an offset divisible by 3, then we inverse the order of the offsets and then apply those to the original key making another key which we repeat this process
 for to make 10 keys in addition to the first key meaning that we have 10 completely unique and different keys meaning that not a single offset in the encrypted

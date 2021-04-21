@@ -8,6 +8,8 @@ numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 # Note: for below with the \\ when it is printed, it comes out as two \ but it is actually stored as just one so it should not matter
 inverseCharacters = ['~', '}', '|', '{', '`', '_', '^', ']', "\\", '[', '@', '?', '>', '=', '<', ';', ':', '/', '.', '-', ' ', ',', '+', '*', ')', '(', "'", '&', '%', '$', "#", '"', '!']
 
+allCharactersString = string.ascii_lowercase + string.ascii_uppercase + string.punctuation + " "
+
 # These are the same so we can just use ascii_letters for both combined
 # print(string.ascii_letters + "\n")
 # print(string.ascii_lowercase + string.ascii_uppercase + "\n")
@@ -132,17 +134,17 @@ def applyOffsets(offsetList, text):
     curOffsetPos = -1
     maxOffsetPos = len(offsetList) - 1
     totalCharactersMoved = 0
-    previousSwapCharNum = 0
+    # previousSwapCharNum = 0
     # If charType = -1 then it is alphabet
     # If charType = 1 then it is symbols
-    charType = -1
+    # charType = -1
     # We take the value of the last offset and then make sure that it is positive and not equal to 0
-    swapCharactersThreshold = offsetList[-1]
+    # swapCharactersThreshold = offsetList[-1]
 
-    if swapCharactersThreshold < 0:
-        swapCharactersThreshold *= -1
-    elif swapCharactersThreshold == 0:
-        swapCharactersThreshold = 1
+    # if swapCharactersThreshold < 0:
+    #    swapCharactersThreshold *= -1
+    # elif swapCharactersThreshold == 0:
+    #    swapCharactersThreshold = 1
 
     for character in text:
         if curOffsetPos >= maxOffsetPos:
@@ -150,38 +152,54 @@ def applyOffsets(offsetList, text):
         else:
             curOffsetPos += 1
 
-        if swapCharactersThreshold == 1:
-            # If it is every character, we just swap it
-            charType *= -1
-        # Otherwise, we check to see if we have reached the next threshold and then if we do we add to the previous threshold number and swap the type
-        elif (totalCharactersMoved / swapCharactersThreshold).is_integer():
-            if (totalCharactersMoved / swapCharactersThreshold) > previousSwapCharNum:
-                previousSwapCharNum += 1
-                charType *= -1
+        # XTU9rpk"$jHrsm3<
+        # print(allCharactersString)
 
-        if charType == -1:
-            # Alphabet
-            if character in string.ascii_letters:
-                # This is the position in the alphabet and the new position that it will be at in the alphabet
-                position = getAlphabetLocation(character)
-                position += offsetList[curOffsetPos]
+        originalPos = allCharactersString.find(character)
+        # print(originalPos)
+        offsetPos = originalPos + offsetList[curOffsetPos]
+        # print(offsetPos)
+        offsetPos = (offsetPos / 85) - int((offsetPos / 85))
+        offsetPos = round(offsetPos * 85)
+        letter = allCharactersString[offsetPos]
 
-                letter = getAlphabetCharacterFromLocation(position)
+        finalText += letter
 
-                finalText += letter
-
-                # print(finalText)
-            elif character in string.punctuation:
-                # This is some arbitrary position
-                position = 6
-                
-
-
-        elif charType == 1:
-            # Symbols
-            print("Symbols")
+        # print(allCharactersString)
+        # print(originalPos)
+        # print(offsetPos)
+        # print(letter)
+        print(finalText)
 
         totalCharactersMoved += 1
+
+        # if swapCharactersThreshold == 1:
+        # If it is every character, we just swap it
+        # charType *= -1
+        # Otherwise, we check to see if we have reached the next threshold and then if we do we add to the previous threshold number and swap the type
+        # elif (totalCharactersMoved / swapCharactersThreshold).is_integer():
+        #    if (totalCharactersMoved / swapCharactersThreshold) > previousSwapCharNum:
+        #        previousSwapCharNum += 1
+        #        charType *= -1
+
+        # if charType == -1:
+        #    # Alphabet
+        #    if character in string.ascii_letters:
+        #        # This is the position in the alphabet and the new position that it will be at in the alphabet
+        #        position = getAlphabetLocation(character)
+        #        position += offsetList[curOffsetPos]
+
+        #        letter = getAlphabetCharacterFromLocation(position)
+
+        #        finalText += letter
+
+        #        print(finalText)
+        #   elif character in string.punctuation:
+        #        # This is some arbitrary position
+        #        position = 6
+        # elif charType == 1:
+            # Symbols
+        #    print("Symbols")
 
 if createNewKeyInput.lower() == "y":
     userKey = createUserKey(16);
@@ -195,7 +213,7 @@ operationType = input("Would you like to encrypt (1) or decrypt (2) some text?\n
 keyOffsets = convertKeyToOffsets(userKey)
 print(keyOffsets)
 
-applyOffsets(keyOffsets, "Hi")
+applyOffsets(keyOffsets, "Hi! EEEEEEEEEEEEEEEEEEEEEEEEE")
 
 print("------- Initiating Process -------")
 if operationType == "1":
