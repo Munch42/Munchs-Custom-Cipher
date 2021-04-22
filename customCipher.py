@@ -15,6 +15,7 @@ for number in numbers:
 
 allCharactersStringLength = len(allCharactersString)
 # print(len(allCharactersString)) = 85 without numbers or 95 With
+# print(allCharactersString)
 
 # These are the same so we can just use ascii_letters for both combined
 # print(string.ascii_letters + "\n")
@@ -25,7 +26,7 @@ allCharactersStringLength = len(allCharactersString)
 def createUserKey(length):
     # https://stackoverflow.com/questions/2257441/random-string-generation-with-upper-case-letters-and-digits
     # It takes a random character from a list created with the ascii characters and the digits for the length of n
-    key = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits + string.punctuation) for _ in range(length))
+    key = ''.join(random.SystemRandom().choice(string.ascii_letters + string.digits + string.punctuation + " ") for _ in range(length))
     return key
 
 def getAlphabetLocation(character):
@@ -94,7 +95,7 @@ def convertKeyToOffsets(key):
             lowercaseCount += 1
         elif character in string.ascii_uppercase:
             uppercaseCount += 1
-        elif character in string.punctuation:
+        elif character in string.punctuation + " ":
             symbolCount += 1
         elif character in numbers:
             num = int(character)
@@ -132,7 +133,7 @@ def convertKeyToOffsets(key):
             offset = number - round(0.5 * lowercaseCount)
 
             offsets.append(offset)
-        elif character in string.punctuation:
+        elif character in string.punctuation + " ":
             # Punctuation
             # print("Symbol")
             symbol_pos = getSymbolLocationInverse(character)
@@ -251,15 +252,30 @@ def decodeText(keys, encText):
 
         # We get the current position and then the key that we are on which is the whole number portion of the char count divided by the key length
         # From there, we can then get the offset we want which is just the offset we are on starting at 0 and then incremented until 15 where we reset it
+        # print(keys)
+        # print("/")
+        # print(reversedKeyOffsets)
+        # print("|")
+        # print(offsetCount)
+        # print("||")
+        # print(reversedKeyOffsets[int(characterCount / keyLength)])
+        # print("|||")
+        # print(reversedKeyOffsets[int(characterCount / keyLength)][offsetCount])
+        # print("||||")
+
         originalPosition = currentPositionInChars + reversedKeyOffsets[int(characterCount / keyLength)][offsetCount]
         originalLetterPos = (originalPosition / allCharactersStringLength) - int((originalPosition / allCharactersStringLength))
         originalLetterPos = round(originalLetterPos * allCharactersStringLength)
         letter = allCharactersString[originalLetterPos]
 
+        # <Wx1&!\:3[])N>W\
+        # Hello there my cat named Phinei!
+        # K}wnu7vlktg5IB:e95_j8idb[OhfEd_Z
+
         decodedMessage += letter
 
         # If we are on the last offset, then we go back to the next offset as we also go to the next key
-        if offsetCount == (keyLength - 1):
+        if offsetCount >= (keyLength - 1):
             offsetCount = 0
         else:
             offsetCount += 1
@@ -330,7 +346,17 @@ for x in range(10):
 
     keys.append(newKey)
 
+# print("Keys: ")
 # print(keys)
+# print("^^^^^")
+
+# +^Y{d:"9,KaU{OgA
+# ["&^X|8-T4'X8X|X8X", '/`q}f=i8:qfq}qfq', ')^7|7/74+777|777', '=|f f[f0>fff fff', '/{7^7>7d:777^777', '[~f|f^fm[fff|fff', '>~7{7\\77>777{777', '^1f~f{ff^fff~fff', '`|n~n|nn`nnn~nnn', '~ G1G GG~GGG1GGG']
+# ["&^X|8-T4'X8X|X8X", '/`q}f=i8:qfq}qfq', ')^7|7/74+777|777', '=|f f[f0>fff fff', '/{7^7>7d:777^777', '[~f|f^fm[fff|fff', '>~7{7\\77>777{777', '^1f~f{ff^fff~fff', '`|n~n|nn`nnn~nnn', '~ G1G GG~GGG1GGG']
+
+# print(convertKeyToOffsets("&^X|8-T4'X8X|X8X"))
+# print("----------------------------------")
+# print(convertKeyToOffsets('/`q}f=i8:qfq}qfq'))
 
 print("------- Initiating Process -------")
 if operationType == "1":
@@ -339,6 +365,7 @@ if operationType == "1":
     totalSections = len(textToEncrypt) / len(userKey)
     if not totalSections.is_integer():
         totalSections = int(totalSections) + 1
+    totalSections = int(totalSections)
 
     keyRepeats = totalSections
 
@@ -374,3 +401,7 @@ elif operationType == "2":
     print("Your decrypted text is: " + decryptedText)
 else:
     print("Please restart the cipher process, selecting a valid option.")
+
+# V-oRmzWVLMBCI19+
+# Hi there my cat Phinei! Something else was 42 * 3 + 9 / (pi + 3) & 2 #cats4life
+# La}xfcvi4qC4g9r\ssr1nrD*v2 ]7jk~D^7Ik7mTxPmqo}()f\+c9 `c?Cvc\}1)^1 ` #64ml|eb98
