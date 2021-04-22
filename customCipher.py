@@ -291,6 +291,17 @@ if createNewKeyInput.lower() == "y":
 if userKey == "":
     userKey = input("Please input your user key to begin the encryption or decryption process:\n");
 
+saveKey = input("Would you like to save your key and message to a file? (Y/n): ")
+fileName = ""
+
+if saveKey.lower() == "y":
+    fileName = input("What would you like the file to be named including the file extension such as .txt?\n")
+    global resultFile
+    resultFile = open(fileName, "w")
+
+resultFile.write("Hi")
+resultFile.close()
+
 operationType = input("Would you like to encrypt (1) or decrypt (2) some text?\n")
 
 # keyOffsets = convertKeyToOffsets(userKey)
