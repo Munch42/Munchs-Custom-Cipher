@@ -2,8 +2,34 @@ import random;
 import string;
 import math;
 
-createNewKeyInput = input("Would you like to create a new unique encryption key? (Y/n): ");
+decryptFromFile = input("Would you like to decrypt a message from a file? (Y/n): ")
+
+fileKey = ""
+textToDecrypt = ""
+
+if decryptFromFile.lower() == "y":
+    print("If the file is in the current directory, please input the filename plus the extension such as .txt")
+    print("If the file is located in another directory, please enter the ENTIRE path such as D:\\myFiles\\texttodecrypt.txt")
+    filePath = input("Please enter path:\n")
+
+    fileToDecrypt = open(filePath, "r")
+    # We must remove the first 5 characters from the first line a.k.a the "Key: " section
+    fileKey = fileToDecrypt.readline()[5:];
+    fileKey = fileKey[:len(fileKey) - 1]
+    # We must remove the first   characters from the second line a.k.a the "Encrypted or Decrypted Message: "
+    textToDecrypt = fileToDecrypt.readline()[19:]
+    textToDecrypt = textToDecrypt[:len(textToDecrypt) - 1]
+
+    fileToDecrypt.close()
+
 userKey = "";
+createNewKeyInput = ""
+
+if fileKey == "":
+    createNewKeyInput = input("Would you like to create a new unique encryption key? (Y/n): ")
+else:
+    userKey = fileKey
+
 numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"]
 # Note: for below with the \\ when it is printed, it comes out as two \ but it is actually stored as just one so it should not matter
 inverseCharacters = ['~', '}', '|', '{', '`', '_', '^', ']', "\\", '[', '@', '?', '>', '=', '<', ';', ':', '/', '.', '-', ' ', ',', '+', '*', ')', '(', "'", '&', '%', '$', "#", '"', '!']
@@ -291,7 +317,21 @@ if createNewKeyInput.lower() == "y":
 if userKey == "":
     userKey = input("Please input your user key to begin the encryption or decryption process:\n");
 
-operationType = input("Would you like to encrypt (1) or decrypt (2) some text?\n")
+saveKey = input("Would you like to save your key and message to a file? (Y/n): ")
+fileName = ""
+
+if saveKey.lower() == "y":
+    fileName = input("What would you like the file to be named including the file extension such as .txt?\n")
+    global resultFile
+    resultFile = open(fileName, "w")
+    resultFile.write("Key: " + userKey + "\n")
+
+operationType = ""
+
+if fileKey == "":
+    operationType = input("Would you like to encrypt (1) or decrypt (2) some text?\n")
+else:
+    operationType = "2"
 
 # keyOffsets = convertKeyToOffsets(userKey)
 # print(keyOffsets)
@@ -330,12 +370,17 @@ for x in range(10):
     previousOffsets = convertKeyToOffsets(previousKey)
     newKey = ""
 
-    if (previousOffsets[-2] / 3).is_integer():
+    offsetToCheck = -2
+
+    if len(previousOffsets) <= 1:
+        offsetToCheck = -1
+
+    if (previousOffsets[offsetToCheck] / 3).is_integer():
         # Inverse the order of the offsets of the previous key and apply them back to previous key
         reversedPreviousOffsets = invertOffsets(previousOffsets)
 
         newKey = applyOffsets(reversedPreviousOffsets, previousKey)
-    elif previousOffsets[-2] % 2 != 0:
+    elif previousOffsets[offsetToCheck] % 2 != 0:
         # It is odd so add 2 to all offsets and apply to previous key
         addedPreviousOffsets = addXToAllOffsets(previousOffsets, 2)
 
@@ -360,7 +405,21 @@ for x in range(10):
 
 print("------- Initiating Process -------")
 if operationType == "1":
-    textToEncrypt = input("Please enter the text that you would like to encrypt in accordance with your key:\n")
+    encryptFromFile = input("Would you like to encrypt a message from a file? (Y/n): ")
+
+    textToEncrypt = ""
+
+    if encryptFromFile.lower() == "y":
+        print("If the file is in the current directory, please input the filename plus the extension such as .txt")
+        print("If the file is located in another directory, please enter the ENTIRE path such as D:\\myFiles\\texttoencrypt.txt")
+        filePath = input("Please enter path:\n")
+
+        fileToEncrypt = open(filePath, "r")
+        textToEncrypt = fileToEncrypt.read();
+
+        fileToEncrypt.close()
+    else:
+        textToEncrypt = input("Please enter the text that you would like to encrypt in accordance with your key:\n")
 
     totalSections = len(textToEncrypt) / len(userKey)
     if not totalSections.is_integer():
@@ -394,13 +453,33 @@ if operationType == "1":
 
     print("Your encrypted text is: " + encryptedText)
 
+    try:
+        resultFile
+    except NameError:
+        resultFile = None
+    else:
+        resultFile.write("Encrypted Message: " + encryptedText + "\n")
+        resultFile.close()
+
 elif operationType == "2":
-    textToDecrypt = input("Please enter the encrypted text that you would like to decrypt with your key:\n")
+    if decryptFromFile.lower() == "n":
+        textToDecrypt = input("Please enter the encrypted text that you would like to decrypt with your key:\n")
+
     decryptedText = decodeText(keys, textToDecrypt)
 
     print("Your decrypted text is: " + decryptedText)
+
+    try:
+        resultFile
+    except NameError:
+        resultFile = None
+    else:
+        resultFile.write("Decrypted Message: " + decryptedText + "\n")
+        resultFile.close()
 else:
     print("Please restart the cipher process, selecting a valid option.")
+
+input()
 
 # V-oRmzWVLMBCI19+
 # Hi there my cat Phinei! Something else was 42 * 3 + 9 / (pi + 3) & 2 #cats4life
