@@ -156,6 +156,11 @@ def convertKeyToOffsets(key):
             # print("Number")
             number = int(character)
 
+            # If the rare case where a key is made up of only uppercase letters and numbers that are 0, meaning that it would be 0 - round(0.5 * 0) or 0 - 0 = 0,
+            # we just set the lowercase count to some randomly chosen (like constant but I randomly chose it) amount to avoid this.
+            if lowercaseCount == 0:
+                lowercaseCount = 8.9
+
             offset = number - round(0.5 * lowercaseCount)
 
             offsets.append(offset)
@@ -433,6 +438,7 @@ if operationType == "1":
     encryptedText = ""
     for i in range(keyRepeats):
         keyToUse = keys[currentKey]
+        #print(keyToUse)
         keyOffsetsToUse = convertKeyToOffsets(keyToUse)
         currentEncryptingPhrase = ""
 
